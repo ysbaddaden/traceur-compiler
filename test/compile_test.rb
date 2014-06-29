@@ -7,6 +7,11 @@ class TraceurCompilerTest < Minitest::Test
     assert_match es5, compile(es6)
   end
 
+  def test_syntax_error
+    error = assert_raises(TraceurCompiler::Error) { compile("var fn = ") }
+    assert_match "Unexpected end of input", error.message
+  end
+
   def compile(es6)
     TraceurCompiler
       .compile(es6, modules: "inline", source_map: false)
