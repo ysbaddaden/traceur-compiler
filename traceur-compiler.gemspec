@@ -18,4 +18,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "execjs"
   gem.add_dependency "activesupport", ">= 3.0.0"
+
+  gem.add_development_dependency "minitest", "~> 5.0"
 end

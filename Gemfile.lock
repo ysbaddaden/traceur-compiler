@@ -1,0 +1,30 @@
+PATH
+  remote: .
+  specs:
+    traceur-compiler (0.0.1)
+      activesupport (>= 3.0.0)
+      execjs
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (4.1.2)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.1)
+      tzinfo (~> 1.1)
+    execjs (2.2.1)
+    i18n (0.6.9)
+    json (1.8.1)
+    minitest (5.3.5)
+    thread_safe (0.3.4)
+    tzinfo (1.2.1)
+      thread_safe (~> 0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  minitest (~> 5.0)
+  traceur-compiler!
