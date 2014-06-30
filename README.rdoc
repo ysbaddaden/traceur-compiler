@@ -2,7 +2,7 @@
 
 Traceur is available at https://github.com/google/traceur-compiler
 
-This is known to work with Traceur 0.33
+This is known to work with Traceur 0.33 up to 0.49
 
 
 === Usage
@@ -12,10 +12,12 @@ First declare the gem in your Gemfile:
   gem "traceur-compiler", github: "ysbaddaden/traceur-compiler"
 
 Then download Traceur (using NPM for example) and configure either the
-TRACEUR_COMPILER_SOURCE_PATH environment variable and set the
-TraceurCompiler::Source.path variable.
+TRACEUR_COMPILER_SOURCE_PATH environment variable, or set it directly:
 
-Then compile your ES6 JavaScript code:
+  TraceurCompiler::Source.path =
+    File.expand_path("../node_modules/traceur/bin/traceur.js", __FILE__)
+
+You may then compile your ES6 JavaScript code:
 
   input = File.read("/path/to/file.js")
 
@@ -28,18 +30,20 @@ Then compile your ES6 JavaScript code:
 
 === Usage with Ruby on Rails (Sprockets)
 
-You must create a sprockets processor in
-<tt>config/initializers/traceur_compiler.rb</tt> for example:
+You must create a sprockets processor in the
+<tt>config/initializers/traceur_compiler.rb</tt> file for example:
 
   require 'traceur-compiler'
 
+  TraceurCompiler::Source.path =
+    File.expand_path("../../../node_modules/traceur/bin/traceur.js", __FILE__)
+
   class TraceurProcessor < Sprockets::Processor
     def evaluate(context, locals)
-      TraceurCompiler.compile(data,
-        filename: module_name,
-        source_map: false,
-        modules: "inline"
-      )
+      # skip vendor assets
+      return data if file.start_with?(Rails.root.join("vendor").to_s)
+
+      TraceurCompiler.compile(data, filename: module_name, source_map: false, modules: "inline")
     end
 
     def module_name
@@ -48,9 +52,6 @@ You must create a sprockets processor in
       end
     end
   end
-
-And eventually register it to the assets pipeline, so every JavaScript file will
-be processed through Traceur:
 
   Rails.application.assets.register_postprocessor("application/javascript", TraceurProcessor)
 
