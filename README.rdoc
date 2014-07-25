@@ -2,7 +2,7 @@
 
 Traceur is available at https://github.com/google/traceur-compiler
 
-This is known to work with Traceur 0.33 up to 0.49
+This is known to work with Traceur 0.33 up to 0.51.
 
 
 === Usage
