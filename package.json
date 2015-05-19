@@ -1,6 +1,6 @@
 {
   "name": "traceur-compiler",
   "devDependencies": {
-    "traceur": "0.0.51"
+    "traceur": "0.0.89"
   }
 }

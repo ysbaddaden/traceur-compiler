@@ -30,11 +30,25 @@ module TraceurCompiler
     end
   end
 
-  def self.compile(content, options)
+  DEFAULT_OPTIONS = {
+    output_language: "es5",
+    source_map: false,
+    module_name: true,
+  }
+
+  def self.compile(content, source_name: nil, output_name: nil, **options)
+    compile_options = DEFAULT_OPTIONS
+      .merge(options)
+      .map { |key, value| [key.to_s.camelize(:lower), value] }
+      .to_h
+
     content = content.read if content.respond_to?(:read)
-    compile_options = options.map { |key, value| [key.to_s.camelize(:lower), value] }.to_h
-    result = Source.context.call("compile", content, compile_options)
-    raise Error.new("TRACEUR COMPILE ERROR:\n" + result["errors"].join("\n")) if result["errors"].any?
+    result = Source.context.call("compile", content, source_name, output_name, compile_options)
+
+    if result["errors"].any?
+      raise Error.new("TRACEUR COMPILE ERROR:\n" + result["errors"].join("\n"))
+    end
+
     result["js"]
   end
 end
