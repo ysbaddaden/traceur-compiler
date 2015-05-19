@@ -30,13 +30,35 @@ You may then compile your ES6 JavaScript code:
 
 === Usage with Ruby on Rails (Sprockets)
 
-You must create a sprockets processor in the
-<tt>config/initializers/traceur_compiler.rb</tt> file for example:
+You must create a sprockets processor, for example in
+<tt>config/initializers/traceur_compiler.rb</tt> and configure TraceurCompiler
+to where your `traceur.js` is:
 
   require 'traceur-compiler'
 
   TraceurCompiler::Source.path =
     File.expand_path("../../../node_modules/traceur/bin/traceur.js", __FILE__)
+
+==== Sprockets 3.x
+
+  class TraceurProcessor
+    def call(input)
+      # skip vendor assets
+      return input[:data] if input[:filename].start_with?(Rails.root.join("vendor").to_s)
+
+      TraceurCompiler.compile(input[:data], filename: module_name(input[:filename]), source_map: false, modules: "inline")
+    end
+
+    def self.module_name(filename)
+      Rails.application.assets.paths.find do |path|
+        return filename[(path.size + 1)..-1] if filename.start_with?(path)
+      end
+    end
+  end
+
+  Rails.application.assets.register_postprocessor("application/javascript", TraceurProcessor.new)
+
+==== Sprockets 2.x
 
   class TraceurProcessor < Sprockets::Processor
     def evaluate(context, locals)
@@ -54,4 +76,5 @@ You must create a sprockets processor in the
   end
 
   Rails.application.assets.register_postprocessor("application/javascript", TraceurProcessor)
+
 
